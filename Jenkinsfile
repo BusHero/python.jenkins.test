@@ -1,19 +1,22 @@
 pipeline {
     agent { docker { image 'python:3.10.1-alpine' } }
     stages {
-        stage('build') {
+        stage('Deploy - Staging') {
             steps {
-                echo 'building'
+                sh './deploy staging'
+                sh './run-smoke-tests'
             }
         }
-        stage('test') {
+
+        stage('Sanity check') {
             steps {
-                echo 'testing'
+                input "Does the staging environment look ok?"
             }
         }
-        stage('deploy') {
+
+        stage('Deploy - Production') {
             steps {
-                echo 'deploying'
+                sh './deploy production'
             }
         }
     }
